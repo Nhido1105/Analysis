@@ -1,6 +1,6 @@
 # **Automobile Maintenance Report**
 This is a personal project for analyzing Automobile Maintenance Data. Further details can be found [here.](https://nhido1105.github.io/Analysis/)
-![](BI.jpg)
+![](Automobile charts.jpg)
 
 ### **Key Metrics and Dimensions**
 * Total Vehicles Analyzed: 204
