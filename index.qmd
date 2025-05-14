@@ -7,24 +7,43 @@ format: html
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-#### **Executive Summary**
+### **Executive Summary**
 According to the examination of car maintenance data, the majority of vehicles repaired have lower to mid-range horsepower, primarily between 50 and 125 hp suggesting an emphasis on fuel efficiency for daily use. Common difficulties include cylinder, and  ignition concerns; however, there are different troubles related to fuel types with gas vehicles exhibit a greater range of issues than diesel vehicles. Replacements and modifications are the main maintenance procedures for problems, especially for sedans and hatchbacks from gas fueled-type. The findings also highlight body styles and fuel types to analyze maintenance requirements and suitable methods.
 
-
-#### **Task 1. Overall Horsepower Distribution**
-
-```{r echo = FALSE}
+```{r, echo = FALSE}
 Maintenance <- read.csv("D:/Downloads/Maintenance.csv")
 Engine <- read.csv("D:/Downloads/Engine.csv")
 Automobile <- read.csv("D:/Downloads/Automobile.csv")
 ```
 
+#### **Automobile**
 ```{r, echo=FALSE}
-str(Automobile)
-str(Engine)
-str(Maintenance)
+library(reactable)
+reactable(Automobile,
+          defaultColDef = colDef(style = list(fontSize = "0.7em"),
+                                 headerStyle = list(fontSize = "0.7em"))
+)
 ```
 
+#### **Engine**
+```{r, echo=FALSE}
+library(reactable)
+reactable(Engine,
+          defaultColDef = colDef(style = list(fontSize = "0.7em"),
+                                 headerStyle = list(fontSize = "0.7em"))
+)
+```
+
+#### **Maintenance**
+```{r, echo=FALSE}
+library(reactable)
+reactable(Maintenance,
+          defaultColDef = colDef(style = list(fontSize = "0.7em"),
+                                 headerStyle = list(fontSize = "0.7em"))
+)
+```
+
+### **Task 1. Overall Horsepower Distribution**
 
 ```{r, echo=FALSE}
 #Replace the "?" with NA to handle missing data and can be used to analyze with NA function
@@ -84,8 +103,8 @@ ggplot(Engine, aes(x = Horsepower)) +
 Due to its suitability for presenting continuous data, a histogram was selected to show the horsepower distribution from the Engine dataset. It can be seen that the majority of automobiles entering the maintenance center have lower to mid-range horsepower, ranging from 50 to 125, while a few have high horsepower engines from 200hp and above. This indicates that these might be exceptions or represents luxury brands or imported cars. Overall, most vehicles come to the maintenance are typically designed for daily and family use, which prioritize fuel efficiency over high performance.
 
 
-#### **Task 2. Horsepower Distribution**
-### 2.1. By Number of Cylinders
+### **Task 2. Horsepower Distribution**
+#### 2.1. By Number of Cylinders
 ```{r, echo=FALSE}
 library("ggplot2")
 ggplot(Engine, aes(x = Horsepower)) +
@@ -98,7 +117,7 @@ ggplot(Engine, aes(x = Horsepower)) +
 The histogram shows the relationship between horsepower and engine cylinder count. There is a large number of four-cylinder engines, which have an average output of 75–125 horsepower. In contrast, five and six-cylinder engines with higher horsepower value are less common, indicating a concentration on efficiency or certain car models. Eight and twelve cylinders vehicles are uncommon, some special diagnostic and maintenance techniques are required. 
 
 
-### 2.2. By Engine Size
+#### 2.2. By Engine Size
 ```{r, echo=FALSE}
 #Create a new categorical variable 'EngineSize' 
 # cut(): sort the engine sizes into selected ranges and assign the labels
@@ -120,8 +139,8 @@ Through the division of engine sizes into several ranges (e.g., 60-100, 101-200,
 Generally, the majority are four-cylinder or less vehicles with horsepower between 75 and 150 and engine sizes between 101 and 200, common for daily driving in city and highway. Higher horsepower levels with bigger sizes are typically seen in engines with eight and twelve cylinders, which results in improved performance.
 
 
-#### **Task 3. Common Troubles in Engines**
-### 3.1. Top 5 Troubles
+### **Task 3. Common Troubles in Engines**
+#### 3.1. Top 5 Troubles
 ```{r, echo=FALSE} 
 library(dplyr)
 TroublesEngine <- Maintenance %>% filter((ErrorCodes=="1")) 
@@ -146,7 +165,7 @@ The top five most frequently reported car problems are shown in the table. With 
 Valve clearance and Fans are the fourth and fifth most frequent issues, with counts of 15 and 13 respectively.
 
 
-### 3.2. Top 5 Troubles by Fuel Types
+#### 3.2. Top 5 Troubles by Fuel Types
 ```{r, echo=FALSE}
 library(dplyr)
 AutomobileEngine <- Automobile %>% 
@@ -181,10 +200,6 @@ CommonGasTroubles <- gasdf %>%
   head(5)
 ```
 
-Diesel and gas-fueled engines provide different issues. “Cam shaft” problems are the most common for diesel, followed by “Cylinders” and “Crank shaft,” indicating mechanical faults within the engine's moving parts. Whereas gas engines show a wider issues, with “Cylinders” being the most common, followed by “Ignition (finding)” and “Noise (finding)” suggesting electrical or component malfunctions affecting starting and running, and general mechanical problems or wear and tear that produce unusual sounds. “Valve clearance” and “Fans” are specific to gas engines. Additionally, the top troubles for diesel vehicles are from sedan and hardtop (figure 4), conversely to gas with five forms (figure 5).
-
-Overall, the top troubles reveal that “Cylinders” is prominent concern across the vehicles. However, there will be different issues when considering fuel types. While the gas engine has the same troubles compared to the top 5 troubles, diesel has several specialized issues to consider, which are “Stroke”, and “ECU’s power”, with the priority for "Cam shaft". Diesels have lower frequency of problems than gasoline, and top issues are from sedan and hardtop while gas engines have several issues occur in different body styles. 
-
 ```{r, echo=FALSE}
 library("kableExtra")
 kbl(CommonDieselTroubles) %>%
@@ -192,6 +207,10 @@ kbl(CommonDieselTroubles) %>%
 kbl(CommonGasTroubles) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```
+
+Diesel and gas-fueled engines provide different issues. “Cam shaft” problems are the most common for diesel, followed by “Cylinders” and “Crank shaft,” indicating mechanical faults within the engine's moving parts. Whereas gas engines show a wider issues, with “Cylinders” being the most common, followed by “Ignition (finding)” and “Noise (finding)” suggesting electrical or component malfunctions affecting starting and running, and general mechanical problems or wear and tear that produce unusual sounds. “Valve clearance” and “Fans” are specific to gas engines. Additionally, the top troubles for diesel vehicles are from sedan and hardtop (figure 4), conversely to gas with five forms (figure 5).
+
+Overall, the top troubles reveal that “Cylinders” is prominent concern across the vehicles. However, there will be different issues when considering fuel types. While the gas engine has the same troubles compared to the top 5 troubles, diesel has several specialized issues to consider, which are “Stroke”, and “ECU’s power”, with the priority for "Cam shaft". Diesels have lower frequency of problems than gasoline, and top issues are from sedan and hardtop while gas engines have several issues occur in different body styles. 
 
 ```{r, echo = FALSE}
 #Additional chart for further analysis
@@ -231,7 +250,7 @@ ggplot(GasBodyTroubles, aes(x = BodyStyles, y = count, fill = Troubles)) +
 
 
 ### **Task 4. Maintenance Methods**
-### 4.1. Maintenance by Body Styles
+#### 4.1. Maintenance by Body Styles
 ```{r, echo=FALSE}
 library(dplyr)
 library("ggplot2")
@@ -286,7 +305,7 @@ ggplot(FilteredBody, aes(x = Troubles, y = count, fill = Methods)) +
 The bar chart illustrates that certain body styles tend to have a higher frequency of three maintenance methods compared to others. As popular car models with four cylinders and mid-range horsepower (between 100 and 125 hp), sedans and hatchbacks may require more frequent maintenance due to their widespread use and flexibility, requiring regular maintenance procedures such as replacements and adjustments. Hardtops and convertibles with lower trouble incidence have fewer maintenance procedures, also emphasizing on the two methods. This implies that the most common approaches often involves changing out and modifying damaged parts (figure 6). The urgent care method only applicable for vehicles that loss of driving ability (figure 7).    
 
 
-### 4.2. Maintenance by Fuel Types
+#### 4.2. Maintenance by Fuel Types
 ```{r, echo=FALSE}
 library(dplyr)
 library("ggplot2")
