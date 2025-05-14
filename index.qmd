@@ -82,6 +82,7 @@ colnames(body_style_counts) <- c("BodyStyle", "Count")
 body_style_counts$Percentage <- body_style_counts$Count / sum(body_style_counts$Count)
 
 # Create BodyStyles pie chart
+green_shades <- c("#3CB371", "#2E8B57", "#008000", "#8FBC8F", "#006400")
 ggplot(body_style_counts, aes(x = "", y = Percentage, fill = BodyStyle)) +
   geom_bar(stat = "identity", width = 1) +
   coord_polar("y", start = 0) +
@@ -90,6 +91,7 @@ ggplot(body_style_counts, aes(x = "", y = Percentage, fill = BodyStyle)) +
             size = 3) +
   labs(title = "Distribution of Body Styles",
        fill = "Body Style") +
+  scale_fill_manual(values = green_shades) +
   theme_void()
 ```
 
@@ -156,13 +158,31 @@ TopTroubles <- TroublesEngine %>%
 ```
 
 ```{r, echo=FALSE}
-library("kableExtra")
-kbl(TopTroubles) %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+library("ggplot2")
+blue_shade <- c("#ADD8E6", "#87CEEB", "#6495ED", "#4682B4", "#1E90FF")
+top_troubles <- data.frame(
+  Troubles = c("Cylinders", "Ignition (finding)", "Noise (finding)", "Valve clearance", "Fans"),
+  count = c(38, 22, 19, 15, 13)
+)
+
+# Calculate percentages
+top_troubles$Percentage <- top_troubles$count / sum(top_troubles$count)
+
+# Create the pie chart
+ggplot(top_troubles, aes(x = "", y = Percentage, fill = Troubles)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y", start = 0) +
+  geom_text(aes(label = paste0(round(Percentage * 100), "%")),
+            position = position_stack(vjust = 0.5),
+            size = 3) +
+  labs(title = "Top Car Troubles",
+       fill = "Trouble") +
+  scale_fill_manual(values = blue_shade) +
+  theme_void()
 ```
 
-The top five most frequently reported car problems are shown in the table. With a significant count of 38, “Cylinders” is the most common issue, indicating possible engine problems. “Ignition (finding)” account for 22 respectively, possibly for electrical issues, emphasizing the importance of stable ignition systems. Noise (finding) is the third most common problem, reported 19 times, this could be due to damage or breakdown seems plausible, as unusual noises often indicate underlying mechanical problems.
-Valve clearance and Fans are the fourth and fifth most frequent issues, with counts of 15 and 13 respectively.
+The top five most frequently reported car problems are shown in the table. With a significant amount of 36%, “Cylinders” is the most common issue, indicating possible engine problems. “Ignition (finding)” account for 21% respectively, possibly for electrical issues, emphasizing the importance of stable ignition systems. Noise (finding) is the third most common problem, reported 18%, this could be due to damage or breakdown seems plausible, as unusual noises often indicate underlying mechanical problems.
+Valve clearance and Fans are the fourth and fifth most frequent issues, with counts of 14% and 12% respectively.
 
 
 #### 3.2. Top 5 Troubles by Fuel Types
@@ -229,7 +249,8 @@ ggplot(DieselBodyTroubles, aes(x = BodyStyles, y = count, fill = Troubles)) +
   labs(title = "Figure 4. Diesel Engine Troubles by Body Styles",
        x = "Body Styles",
        y = "Troubles Count",
-       fill = "Trouble Type")
+       fill = "Trouble Type") +
+  scale_fill_manual(values = blue_shade)
 ```
 
 ```{r, echo=FALSE}
@@ -245,7 +266,8 @@ ggplot(GasBodyTroubles, aes(x = BodyStyles, y = count, fill = Troubles)) +
   labs(title = "Figure 5. Gas Engine Troubles by Body Styles",
        x = "Body Styles",
        y = "Troubles Count",
-       fill = "Trouble Type")
+       fill = "Trouble Type") +
+  scale_fill_manual(values = blue_shade)
 ```
 
 
@@ -254,6 +276,8 @@ ggplot(GasBodyTroubles, aes(x = BodyStyles, y = count, fill = Troubles)) +
 ```{r, echo=FALSE}
 library(dplyr)
 library("ggplot2")
+red_shades <- c("#FFA07A","#F08080","#CD5C5C")
+
 Troubles_Methods <- TroubleFuels %>%
   filter(Troubles != "No error" & !is.na(Troubles) & !is.na(Methods))
   #Filter "No error" in TroubleFuels, no NA in Troubles and Methods data
@@ -266,7 +290,8 @@ BodyMethods <- Troubles_Methods %>%
 ggplot(BodyMethods, aes(x = BodyStyles, y = count, fill = Methods)) +
   geom_bar(stat = "identity", position = "dodge", colour = "black") +
   labs(title = "Figure 6. Maintenance Methods by Body Styles", x = "Body Styles", y = "Count") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_fill_manual(values = red_shades)
 ```
 
 ```{r, echo=FALSE}
@@ -299,7 +324,8 @@ ggplot(FilteredBody, aes(x = Troubles, y = count, fill = Methods)) +
   labs(title = " Figure 7. Maintenance Methods by Top Troubles and Body Styles",
        x = "Troubles",
        y = "Count",
-       fill = "Maintenance Methods")
+       fill = "Maintenance Methods") +
+  scale_fill_manual(values = red_shades)
 ```
 
 The bar chart illustrates that certain body styles tend to have a higher frequency of three maintenance methods compared to others. As popular car models with four cylinders and mid-range horsepower (between 100 and 125 hp), sedans and hatchbacks may require more frequent maintenance due to their widespread use and flexibility, requiring regular maintenance procedures such as replacements and adjustments. Hardtops and convertibles with lower trouble incidence have fewer maintenance procedures, also emphasizing on the two methods. This implies that the most common approaches often involves changing out and modifying damaged parts (figure 6). The urgent care method only applicable for vehicles that loss of driving ability (figure 7).    
@@ -314,7 +340,8 @@ FuelMethods <- Troubles_Methods %>%
   summarise(count = n(), .groups = "drop")
 ggplot(FuelMethods, aes(x = FuelTypes, y = count, fill = Methods)) +
   geom_bar(stat = "identity", position = "dodge", colour = "black") +
-  labs(title = "Figure 8. Maintenance Methods by Fuel Types", x = "Fuel Types", y = "Count")
+  labs(title = "Figure 8. Maintenance Methods by Fuel Types", x = "Fuel Types", y = "Count") +
+  scale_fill_manual(values = red_shades)
 ```
 
 ```{r, echo=FALSE}
@@ -347,7 +374,8 @@ ggplot(FilteredFuel, aes(x = Troubles, y = count, fill = Methods)) +
        x = "Troubles",
        y = "Count",
        fill = "Maintenance Methods") +
-theme(axis.text.x = element_text(angle = 45, hjust = 1))
+theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_fill_manual(values = red_shades)
 ```
 
 “Replacement” and “Adjustment” methods are primarily needed for both gas and diesel engines; however, “Urgent care” methods are not necessary for diesel engines. Gas vehicles show a substantially higher count across all maintenance methods, and may require frequent changes to maintain maximum performance since their systems are created for versatility with daily use and higher speed. This type, often associated with the horsepower of 100 to 125 and 4 cylinders (figure 2), potentially has lower durability, which might experience more sudden and critical failures, such as loss of driving ability (figure 9), requiring immediate attention. In contrast, diesel engines, known for their durability, may require merely part replacements, and adjustments. This fuel type contains lower horsepower with 4 cylinders and below (figure 2), can be adjusted or replaced on a scheduled basis, with fewer unexpected problems requiring urgent care.
