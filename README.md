@@ -1,5 +1,5 @@
 # **Automobile Maintenance Report**
-This is a personal project for analyzing Automobile Maintenance Data. Further details can be found [here.](https://nhido1105.github.io/Analysis/)
+This is a personal project for analyzing Automobile Maintenance Data. Further details can be found [here.](https://nhido1105.github.io/Analysis/){target="_blank"}
 
 
 ### **Key Metrics and Dimensions**
