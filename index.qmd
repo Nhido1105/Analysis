@@ -1,8 +1,7 @@
 ---
-title: "Project_1"
+title: "Analysis of Automobile Maintenance Data"
 format: html
 ---
-
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -14,44 +13,36 @@ According to the examination of car maintenance data, the majority of vehicles r
 
 #### **Task 1. Overall Horsepower Distribution**
 
-
 ```{r echo = FALSE}
 Maintenance <- read.csv("D:/Downloads/Maintenance.csv")
 Engine <- read.csv("D:/Downloads/Engine.csv")
 Automobile <- read.csv("D:/Downloads/Automobile.csv")
 ```
 
-### Automobile data
 ```{r, echo=FALSE}
 str(Automobile)
-```
-
-### Engine data
-```{r, echo=FALSE}
 str(Engine)
-```
-
-### Maintenance data
-```{r, echo=FALSE}
 str(Maintenance)
 ```
 
-```{r}
+
+```{r, echo=FALSE}
 #Replace the "?" with NA to handle missing data and can be used to analyze with NA function
 Automobile[Automobile == "?"] <- NA
 Engine[Engine == "?"] <- NA
 Maintenance[Maintenance == "?"] <- NA
 ```
 
-```{r}
+```{r, echo=FALSE}
 #Convert categorical variables BodyStyles, FuelTypes,  ErrorCodes to factors
 #These datas are used in plotting charts
 Automobile$BodyStyles <- as.factor(Automobile$BodyStyles)
+Automobile$Manufactures <- as.factor(Automobile$Manufactures)
 Engine$FuelTypes <- as.factor(Engine$FuelTypes)
 Maintenance$ErrorCodes <- as.factor(Maintenance$ErrorCodes)
 ```
 
-```{r}
+```{r, echo=FALSE}
 #Replace the missing values in column Horsepower with the mean horsepower
 Engine$Horsepower <- as.numeric(Engine$Horsepower) 
 #Convert categorical variable Horsepower to a numeric because mean() needs the numeric input
@@ -62,7 +53,28 @@ Engine$Horsepower[is.na(Engine$Horsepower)] <- mean(Engine$Horsepower, na.rm = T
 #mean(): continuous data
 ```
 
-```{r}
+```{r, echo=FALSE}
+library(dplyr)
+library("ggplot2")
+body_style_counts <- as.data.frame(table(Automobile$BodyStyles))
+colnames(body_style_counts) <- c("BodyStyle", "Count")
+
+# Calculate the percentage
+body_style_counts$Percentage <- body_style_counts$Count / sum(body_style_counts$Count)
+
+# Create BodyStyles pie chart
+ggplot(body_style_counts, aes(x = "", y = Percentage, fill = BodyStyle)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y", start = 0) +
+  geom_text(aes(label = paste0(round(Percentage * 100), "%")),
+            position = position_stack(vjust = 0.5),
+            size = 3) +
+  labs(title = "Distribution of Body Styles",
+       fill = "Body Style") +
+  theme_void()
+```
+
+```{r, echo=FALSE}
 library("ggplot2")
 ggplot(Engine, aes(x = Horsepower)) +
   geom_histogram(binwidth = 10, fill = "darkgreen", color = "black") +
@@ -74,7 +86,7 @@ Due to its suitability for presenting continuous data, a histogram was selected 
 
 #### **Task 2. Horsepower Distribution**
 ### 2.1. By Number of Cylinders
-```{r}
+```{r, echo=FALSE}
 library("ggplot2")
 ggplot(Engine, aes(x = Horsepower)) +
   geom_histogram(fill = "darkgreen", color = "black") +
@@ -87,7 +99,7 @@ The histogram shows the relationship between horsepower and engine cylinder coun
 
 
 ### 2.2. By Engine Size
-```{r}
+```{r, echo=FALSE}
 #Create a new categorical variable 'EngineSize' 
 # cut(): sort the engine sizes into selected ranges and assign the labels
 Engine$EngineSize <- cut(Engine$EngineSize,
@@ -110,7 +122,7 @@ Generally, the majority are four-cylinder or less vehicles with horsepower betwe
 
 #### **Task 3. Common Troubles in Engines**
 ### 3.1. Top 5 Troubles
-```{r} 
+```{r, echo=FALSE} 
 library(dplyr)
 TroublesEngine <- Maintenance %>% filter((ErrorCodes=="1")) 
 #Filter out the rows with Troubles that have Error Codes = 1 which related to the engine
@@ -124,7 +136,7 @@ TopTroubles <- TroublesEngine %>%
   head(5) #Select the first 5 rows
 ```
 
-```{r}
+```{r, echo=FALSE}
 library("kableExtra")
 kbl(TopTroubles) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
@@ -135,7 +147,7 @@ Valve clearance and Fans are the fourth and fifth most frequent issues, with cou
 
 
 ### 3.2. Top 5 Troubles by Fuel Types
-```{r}
+```{r, echo=FALSE}
 library(dplyr)
 AutomobileEngine <- Automobile %>% 
   left_join(Engine, by = "EngineModel", relationship = "many-to-many")
@@ -220,7 +232,7 @@ ggplot(GasBodyTroubles, aes(x = BodyStyles, y = count, fill = Troubles)) +
 
 ### **Task 4. Maintenance Methods**
 ### 4.1. Maintenance by Body Styles
-```{r}
+```{r, echo=FALSE}
 library(dplyr)
 library("ggplot2")
 Troubles_Methods <- TroubleFuels %>%
@@ -275,7 +287,7 @@ The bar chart illustrates that certain body styles tend to have a higher frequen
 
 
 ### 4.2. Maintenance by Fuel Types
-```{r}
+```{r, echo=FALSE}
 library(dplyr)
 library("ggplot2")
 FuelMethods <- Troubles_Methods %>%
